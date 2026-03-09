@@ -1,0 +1,20 @@
+{
+  "updated_at": 1772249920,
+  "wallets": {
+    "0xd167ab13097aEA00CAf93DDF281760067665CC19": {
+      "win_rate": 0.4286,
+      "recent_win_rate": 0.4286,
+      "avg_hold_minutes": 150.65,
+      "max_drawdown_pct": 21.64,
+      "score": 53.25,
+      "realized_trade_count": 7,
+      "realized_pnl_sum": 0.114601,
+      "realized_win_rate": 0.4286,
+      "open_positions": [],
+      "open_position_count": 0,
+      "open_unrealized_pnl_sum": 0
+    }
+  },
+  "threshold": 70.0,
+  "mode": "dry-run"
+}

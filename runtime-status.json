@@ -1,0 +1,21 @@
+{
+  "started_at": 1772447072,
+  "mode": "dry-run",
+  "kill_switch": true,
+  "wallets": [
+    "0xd167ab13097aEA00CAf93DDF281760067665CC19"
+  ],
+  "threshold": 70.0,
+  "trailing_tp_enable": false,
+  "trailing_tp_callback_pct": 1.0,
+  "poll_seconds": 5,
+  "event_granularity": "order",
+  "status": "running",
+  "processed_event_count": 329,
+  "current_exposure_pct": 49.7845,
+  "last_cycle_ts": 1772447072,
+  "last_cycle_new_events": 0,
+  "initial_follow_decision": "pending",
+  "initial_follow_done": false,
+  "detected_lang": "zh"
+}
