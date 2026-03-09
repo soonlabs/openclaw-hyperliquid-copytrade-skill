@@ -62,12 +62,12 @@ For each new normalized fill event:
 6. Emit Telegram rationale and execution receipt.
 7. Persist state and runtime snapshot.
 
-## Safety defaults (overnight)
+## Default runtime profile
 
-Recommended:
+Ready-to-use defaults:
 
-- `MODE=dry-run`
-- `KILL_SWITCH=true`
+- `MODE=live`
+- `KILL_SWITCH=false`
 - `HL_REAL_EXECUTION=false`
 
-This keeps analysis and alerts active while preventing live order submission.
+This enables live decision/execution flow at startup. If you want simulation-first behavior, switch to `MODE=dry-run` manually.

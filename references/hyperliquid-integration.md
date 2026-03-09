@@ -78,7 +78,7 @@ python3 skills/openclaw-hyperliquid-copytrade/scripts/live_executor_service_stdl
 Real execution mode (signed market orders):
 
 - set `HL_REAL_EXECUTION=true`
-- set `HL_WALLET_PRIVATE_KEY` (keep only in local `.env`)
+- set `HYPERLIQUID_WALLET_PRIVATE_KEY` (keep only in local `.env`)
 - keep `HL_API_URL=https://api.hyperliquid.xyz`
 - optional: tune `HL_MARKET_SLIPPAGE`
 
@@ -93,7 +93,7 @@ python3 skills/openclaw-hyperliquid-copytrade/scripts/manage_services.py stop
 Startup Telegram flow:
 
 - Runner sends startup message with web URL and monitored wallet list.
-- It asks for `YES` / `NO` (also supports `是/否/好/不要`) to decide initial-follow flow.
+- It asks for `YES` / `NO` (also supports localized affirmative/negative variants) to decide initial-follow flow.
 - Telegram language can be forced by `TG_LANG=zh|en`, or auto-detected with `TG_LANG=auto`.
 - Auto mode prioritizes Telegram `from.language_code` (e.g. `zh-CN`, `en-US`), then falls back to text detection.
 - Decision is read via Telegram `getUpdates` and persisted in state.

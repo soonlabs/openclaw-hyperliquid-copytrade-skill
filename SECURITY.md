@@ -4,7 +4,7 @@
 
 - Never commit secrets to git.
 - Keep all credentials in local `.env` only.
-- Treat `HL_WALLET_PRIVATE_KEY` as the highest-risk secret.
+- Treat `HYPERLIQUID_WALLET_PRIVATE_KEY` as the highest-risk secret.
 - Default to safe mode for first run:
   - `MODE=dry-run`
   - `KILL_SWITCH=true`

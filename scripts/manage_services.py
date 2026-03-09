@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import locale
 import os
 import signal
 import subprocess
@@ -8,9 +9,36 @@ from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
 ROOT = BASE.parent
+WORKSPACE_ROOT = ROOT.parent.parent
 PID_FILE = ROOT / "services-pids.json"
 LOG_DIR = ROOT / "logs"
 STATE_FILE = ROOT / "state.json"
+ENV_FILE = WORKSPACE_ROOT / ".env"
+ENV_EXAMPLE = ROOT / "references" / "env.example"
+
+REQUIRED_KEYS = [
+    "TARGET_WALLETS",
+    "TELEGRAM_BOT_TOKEN",
+    "TELEGRAM_CHAT_ID",
+    "HYPERLIQUID_WALLET_PRIVATE_KEY",
+]
+
+
+def _detect_lang() -> str:
+    tg_lang = os.getenv("TG_LANG", "auto").strip().lower()
+    if tg_lang in {"zh", "zh-cn", "zh-hans", "zh-tw", "zh-hant"}:
+        return "zh"
+    if tg_lang in {"en", "en-us", "en-gb"}:
+        return "en"
+
+    loc = (os.getenv("LANG") or (locale.getdefaultlocale()[0] or "") or "").lower()
+    if loc.startswith("zh"):
+        return "zh"
+    return "en"
+
+
+def _t(lang: str, en: str, zh: str) -> str:
+    return zh if lang == "zh" else en
 
 
 def _prepare_startup_state():
@@ -26,17 +54,84 @@ def _prepare_startup_state():
     STATE_FILE.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def _load_workspace_env() -> dict:
-    env = os.environ.copy()
-    env_path = ROOT.parent.parent / ".env"
-    if not env_path.exists():
-        return env
-    for line in env_path.read_text(encoding="utf-8").splitlines():
+def _parse_env(path: Path) -> dict:
+    data = {}
+    if not path.exists():
+        return data
+    for line in path.read_text(encoding="utf-8").splitlines():
         s = line.strip()
         if not s or s.startswith("#") or "=" not in s:
             continue
         k, v = s.split("=", 1)
-        env[k.strip()] = v.strip()
+        data[k.strip()] = v.strip()
+    return data
+
+
+def _write_env(path: Path, data: dict) -> None:
+    lines = [f"{k}={v}" for k, v in data.items()]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _missing_required_keys(data: dict) -> list[str]:
+    missing = []
+    for k in REQUIRED_KEYS:
+        v = str(data.get(k, "")).strip()
+        if not v or v == "replace_me":
+            missing.append(k)
+    return missing
+
+
+def _ensure_required_config_interactive() -> bool:
+    lang = _detect_lang()
+
+    if not ENV_FILE.exists() and ENV_EXAMPLE.exists():
+        ENV_FILE.write_text(ENV_EXAMPLE.read_text(encoding="utf-8"), encoding="utf-8")
+
+    data = _parse_env(ENV_FILE)
+    missing = _missing_required_keys(data)
+    if not missing:
+        return True
+
+    print(_t(lang, "⚠️ First run or incomplete config detected. Let's collect required fields step-by-step:", "⚠️ 检测到首次启动或配置不完整，先进行分步骤配置："))
+    print(_t(lang, f"Config file: {ENV_FILE}", f"配置文件：{ENV_FILE}"))
+
+    if not sys.stdin.isatty():
+        print(_t(lang, "\nNon-interactive terminal detected. Please fill the following fields and retry:", "\n当前不是交互终端，无法逐步询问。请先补齐以下字段后重试："))
+        for key in missing:
+            print(f"- {key}")
+        return False
+
+    prompts = {
+        "TARGET_WALLETS": _t(lang, "1/4 Enter target wallet address(es), comma-separated (discover smart wallets at https://simpfor.fun/): ", "1/4 请输入跟单目标钱包地址（多个用逗号分隔，推荐在 https://simpfor.fun/ 发现聪明钱）: "),
+        "TELEGRAM_BOT_TOKEN": _t(lang, "2/4 Enter Telegram Bot Token: ", "2/4 请输入 Telegram Bot Token: "),
+        "TELEGRAM_CHAT_ID": _t(lang, "3/4 Enter Telegram Chat ID: ", "3/4 请输入 Telegram Chat ID: "),
+        "HYPERLIQUID_WALLET_PRIVATE_KEY": _t(lang, "4/4 Enter Hyperliquid wallet private key (saved locally in .env only): ", "4/4 请输入 Hyperliquid 钱包私钥（仅写入本地 .env）: "),
+    }
+    for key in REQUIRED_KEYS:
+        if key not in missing:
+            continue
+        val = input(prompts[key]).strip()
+        if val:
+            data[key] = val
+
+    still_missing = _missing_required_keys(data)
+    _write_env(ENV_FILE, data)
+
+    if still_missing:
+        print(_t(lang, "\n❌ Configuration is still incomplete. Input has been saved. Please fill remaining fields and retry:", "\n❌ 配置仍不完整，已保存当前输入。请补齐后再启动："))
+        for key in still_missing:
+            print(f"- {key}")
+        print(_t(lang, f"Edit file: {ENV_FILE}", f"编辑文件：{ENV_FILE}"))
+        return False
+
+    print(_t(lang, "\n✅ Required configuration is complete. Continuing startup...", "\n✅ 必要配置已完成，正在继续启动服务…"))
+    return True
+
+
+def _load_workspace_env() -> dict:
+    env = os.environ.copy()
+    for k, v in _parse_env(ENV_FILE).items():
+        env[k] = v
     return env
 
 
@@ -55,6 +150,9 @@ def _resolve_python() -> str:
 
 
 def start_all():
+    if not _ensure_required_config_interactive():
+        raise SystemExit(1)
+
     _prepare_startup_state()
     py = _resolve_python()
     pids = {}

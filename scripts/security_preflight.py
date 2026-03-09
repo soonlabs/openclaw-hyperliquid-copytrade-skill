@@ -25,7 +25,7 @@ SKIP_FILES = {
 }
 
 ENV_LINE_PATTERNS = [
-    ("private-key-var", re.compile(r"^\s*HL_WALLET_PRIVATE_KEY\s*=\s*(?!\s*$|replace_me|your_|<)", re.IGNORECASE)),
+    ("private-key-var", re.compile(r"^\s*HYPERLIQUID_WALLET_PRIVATE_KEY\s*=\s*(?!\s*$|replace_me|your_|<)", re.IGNORECASE)),
     ("telegram-token-var", re.compile(r"^\s*TELEGRAM_BOT_TOKEN\s*=\s*(?!\s*$|replace_me|your_|<)", re.IGNORECASE)),
     ("executor-bearer-var", re.compile(r"^\s*LIVE_EXECUTOR_BEARER\s*=\s*(?!\s*$|replace_me|your_|<)", re.IGNORECASE)),
 ]

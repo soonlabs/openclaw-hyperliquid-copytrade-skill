@@ -156,6 +156,30 @@ def _render_decision_ack(lang: str, decision: str) -> str:
     return f"Received decision: {decision.upper()}. {'Will allow initial follow flow.' if decision == 'yes' else 'Will skip initial follow flow.'}"
 
 
+def _render_missing_wallets_prompt(lang: str) -> str:
+    if lang == "zh":
+        return (
+            "⚠️ 目前还没有配置跟单地址，已暂停启动跟单流程。\n"
+            "\n"
+            "你可以先到 https://simpfor.fun/ 发现并筛选要跟随的钱包地址。\n"
+            "\n"
+            "推荐直接在对话里把地址发给我（支持多个，逗号分隔），我会按对话继续帮你完成配置并重启服务。\n"
+            "\n"
+            "如果你必须手动修改文件，请编辑：/Users/damon/.openclaw/workspace-main/.env\n"
+            "并设置 TARGET_WALLETS=<地址1,地址2>，保存后重启服务。"
+        )
+    return (
+        "⚠️ No target wallets configured, so copy-trading startup is paused.\n"
+        "\n"
+        "You can discover candidate wallets at https://simpfor.fun/.\n"
+        "\n"
+        "Preferred: send wallet address(es) directly in chat (comma-separated), and I will continue with guided setup + restart.\n"
+        "\n"
+        "If manual edit is required, update: /Users/damon/.openclaw/workspace-main/.env\n"
+        "Set TARGET_WALLETS=<addr1,addr2>, then restart services."
+    )
+
+
 def _render_initial_follow_msg(lang: str, total_positions: int) -> str:
     if lang == "zh":
         return f"🟢 收到 YES。检测到当前持仓 {total_positions} 个，正在执行初次跟单流程。"
@@ -326,7 +350,24 @@ def _evaluate_tp_sl_trigger(
 def main() -> None:
     load_env_file()
 
-    wallets = [w.strip().replace(" ", "") for w in get_required("TARGET_WALLETS").split(",") if w.strip()]
+    tg_lang = os.getenv("TG_LANG", "auto").strip().lower()
+    lang = "zh" if tg_lang in {"auto", "zh"} else "en"
+
+    target_wallets_raw = os.getenv("TARGET_WALLETS", "")
+    wallets = [w.strip().replace(" ", "") for w in target_wallets_raw.split(",") if w.strip()]
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+
+    if not wallets:
+        msg = _render_missing_wallets_prompt(lang)
+        print(msg)
+        if bot_token and chat_id:
+            try:
+                send_telegram(bot_token, chat_id, msg)
+            except Exception as e:
+                print(f"telegram missing-wallet prompt error: {e}")
+        return
+
     mode = os.getenv("MODE", "dry-run")
     kill_switch = os.getenv("KILL_SWITCH", "false").lower() in {"1", "true", "yes", "on"}
     max_events_per_cycle = int(os.getenv("MAX_EVENTS_PER_CYCLE", "20"))
@@ -337,8 +378,10 @@ def main() -> None:
     trailing_tp_enable = os.getenv("TRAILING_TP_ENABLE", "false").lower() in {"1", "true", "yes", "on"}
     trailing_tp_callback_pct = float(os.getenv("TRAILING_TP_CALLBACK_PCT", "1"))
     threshold = float(os.getenv("SCORE_THRESHOLD", "70"))
-    bot_token = get_required("TELEGRAM_BOT_TOKEN")
-    chat_id = get_required("TELEGRAM_CHAT_ID")
+    if not bot_token:
+        raise ValueError("Missing required env: TELEGRAM_BOT_TOKEN")
+    if not chat_id:
+        raise ValueError("Missing required env: TELEGRAM_CHAT_ID")
     poll_seconds = int(os.getenv("POLL_SECONDS", "5"))
     capital_usd = float(os.getenv("CAPITAL_USD", "1000"))
     state_file = os.getenv("STATE_FILE", "./skills/openclaw-hyperliquid-copytrade/state.json")
@@ -354,7 +397,6 @@ def main() -> None:
     wallet_analytics_file = os.getenv(
         "WALLET_ANALYTICS_FILE", "./skills/openclaw-hyperliquid-copytrade/wallet-analytics.json"
     )
-    tg_lang = os.getenv("TG_LANG", "auto").strip().lower()
     event_granularity = os.getenv("EVENT_GRANULARITY", "order").strip().lower()  # order|fill
     dedup_window_seconds = int(os.getenv("DECISION_DEDUP_WINDOW_SECONDS", "0"))
 

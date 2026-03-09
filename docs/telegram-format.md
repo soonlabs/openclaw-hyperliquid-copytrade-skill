@@ -4,32 +4,32 @@
 
 ## 1) Startup snapshot
 
-Sent when service starts (or forced prompt), includes:
+Sent on service startup (or forced startup prompt). Includes:
 
-- Web panel URL
+- web dashboard URL
 - monitored wallets
-- wallet snapshot block (score/win-rate/hold-time/drawdown/open positions)
+- wallet snapshot block (score / win-rate / hold-time / drawdown / open positions)
 - initial-follow prompt when applicable
 
-Chinese example:
+Example:
 
 ```text
-🚀 Copytrade 服务已启动
-🌐 Web 面板：http://127.0.0.1:8899
-👛 监控钱包：0x...
+🚀 Copytrade services started
+🌐 Web: http://127.0.0.1:8899
+👛 Monitoring wallet(s): 0x...
 
-📌 当前快照
+📌 Snapshot
 - 0x...
 score=78 wr=0.63 rwr=0.70 hold=95.5m dd=12.3% open_pos=2
   - BTC long sz=0.01 entry=62000 upnl=14.2
 
-❓ 请回复 YES / NO：是否立即执行初次跟单？
+❓ Reply YES / NO: execute initial follow now?
 ```
 
 No-open-position variant ends with:
 
 ```text
-ℹ️ 当前没有可跟随持仓，已跳过初次跟单询问。
+ℹ️ No open positions found, skipping initial follow prompt.
 ```
 
 ## 2) Decision acknowledgement
@@ -37,10 +37,10 @@ No-open-position variant ends with:
 When operator replies `YES/NO` for initial follow:
 
 ```text
-已收到你的决策：YES。将允许初次跟单流程。
+Received decision: YES. Will allow initial follow flow.
 ```
 
-## 3) Initial follow execution logs
+## 3) Initial-follow execution logs
 
 Per startup position:
 
@@ -54,16 +54,16 @@ Per startup position:
 Template shape:
 
 ```text
-📍 标的：<symbol> <side>
-👛 钱包：<wallet>
-⚙️ 模式：<mode>
+📍 Symbol: <symbol> <side>
+👛 Wallet: <wallet>
+⚙️ Mode: <mode>
 
-<自然语言风控解释块>
+<natural-language risk rationale block>
 
-🧾 执行回执：<order_or_null>
+🧾 Execution receipt: <order_or_null>
 ```
 
-Rationale block currently includes:
+Rationale block includes:
 
 - decision (`FOLLOW` / `SKIP` / `CLOSE`)
 - score vs threshold
@@ -77,7 +77,7 @@ Rationale block currently includes:
 
 ## Formatting principles
 
-- Prioritize readability on mobile.
-- Include explicit skip reasons.
+- Keep messages mobile-readable.
+- Always include explicit skip reasons.
 - Keep decision and risk checks on separate lines.
-- Do not leak secrets (token/private key) into Telegram output.
+- Never leak secrets (token/private key) into Telegram output.

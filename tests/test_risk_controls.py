@@ -103,6 +103,13 @@ class TestRiskControls(unittest.TestCase):
         collapsed = runner._collapse_events_by_order(events, processed_order_keys=processed)
         self.assertEqual(collapsed, [])
 
+    def test_missing_wallet_prompt_contains_discovery_url(self):
+        msg = runner._render_missing_wallets_prompt("zh")
+        self.assertIn("没有配置跟单地址", msg)
+        self.assertIn("https://simpfor.fun/", msg)
+        self.assertIn("TARGET_WALLETS", msg)
+        self.assertIn("/Users/damon/.openclaw/workspace-main/.env", msg)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -26,7 +26,7 @@ EXPECTED_BEARER = os.getenv("EXECUTOR_BEARER", "").strip()
 
 HL_REAL_EXECUTION = os.getenv("HL_REAL_EXECUTION", "false").lower() in {"1", "true", "yes", "on"}
 HL_API_URL = os.getenv("HL_API_URL", "https://api.hyperliquid.xyz")
-HL_WALLET_PRIVATE_KEY = os.getenv("HL_WALLET_PRIVATE_KEY", "").strip()
+HYPERLIQUID_WALLET_PRIVATE_KEY = os.getenv("HYPERLIQUID_WALLET_PRIVATE_KEY", "").strip()
 HL_SLIPPAGE = float(os.getenv("HL_MARKET_SLIPPAGE", "0.05"))
 
 
@@ -40,8 +40,8 @@ def _json(handler: BaseHTTPRequestHandler, code: int, payload: dict):
 
 
 def _execute_real(body: Dict[str, Any]) -> Dict[str, Any]:
-    if not HL_WALLET_PRIVATE_KEY:
-        raise RuntimeError("HL_WALLET_PRIVATE_KEY missing")
+    if not HYPERLIQUID_WALLET_PRIVATE_KEY:
+        raise RuntimeError("HYPERLIQUID_WALLET_PRIVATE_KEY missing")
 
     from eth_account import Account
     from hyperliquid.exchange import Exchange
@@ -65,7 +65,7 @@ def _execute_real(body: Dict[str, Any]) -> Dict[str, Any]:
     if raw_size <= 0:
         raise RuntimeError("computed size <= 0")
 
-    acct = Account.from_key(HL_WALLET_PRIVATE_KEY)
+    acct = Account.from_key(HYPERLIQUID_WALLET_PRIVATE_KEY)
     info = Info(base_url=HL_API_URL, skip_ws=True)
     meta = info.meta()
     universe = meta.get("universe", []) if isinstance(meta, dict) else []

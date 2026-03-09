@@ -63,10 +63,10 @@ Close-side is opposite of copied side. Close reason (including trailing retrace 
 
 ## Recommended operational posture
 
-### Default / overnight
+### Default / ready-to-use
 
-- `MODE=dry-run`
-- `KILL_SWITCH=true`
+- `MODE=live`
+- `KILL_SWITCH=false`
 - `HL_REAL_EXECUTION=false`
 
 ### Live activation checklist

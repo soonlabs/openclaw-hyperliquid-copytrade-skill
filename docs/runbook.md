@@ -10,14 +10,14 @@
 
 Minimum required values:
 
-- `TARGET_WALLETS`
+- `TARGET_WALLETS` (recommended: discover smart wallets at https://simpfor.fun/)
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_CHAT_ID`
-- `HL_WALLET_PRIVATE_KEY`
+- `HYPERLIQUID_WALLET_PRIVATE_KEY`
 
 Optional with defaults:
 
-- `MODE` (`dry-run` by default)
+- `MODE` (`live` by default)
 - `MAX_RISK_PER_TRADE_PCT` (default `10`)
 - `MAX_TOTAL_EXPOSURE_PCT` (default `60`)
 - `SCORE_THRESHOLD` (default `70`)
@@ -38,6 +38,9 @@ Trailing TP options:
 ## One-click service operations
 
 From workspace root:
+
+> On first run (or when required fields are missing), `start` now runs a step-by-step interactive setup flow (TARGET_WALLETS / Telegram / private key) before services are launched.
+> In non-interactive terminals, the script lists missing required fields and exits to prevent accidental startup with incomplete config.
 
 ```bash
 python3 skills/openclaw-hyperliquid-copytrade/scripts/manage_services.py start
@@ -78,7 +81,7 @@ Cause: live mode enabled without executor endpoint.
 Fix:
 
 - either set `LIVE_EXECUTOR_URL`, or
-- switch back to `MODE=dry-run`.
+- temporarily switch to `MODE=dry-run`.
 
 ---
 
@@ -160,12 +163,12 @@ python3 -m unittest skills/openclaw-hyperliquid-copytrade/tests/test_trailing_tp
 python3 -m unittest skills/openclaw-hyperliquid-copytrade/tests/test_backtest_trailing_tp.py -v
 ```
 
-## Overnight safe profile
+## Default profile (ready to use)
 
-Suggested overnight profile:
+Current default profile:
 
-- `MODE=dry-run`
-- `KILL_SWITCH=true`
+- `MODE=live`
+- `KILL_SWITCH=false`
 - `HL_REAL_EXECUTION=false`
 
-This preserves monitoring and Telegram visibility with zero live execution.
+If you need a safer observation mode, switch manually to `MODE=dry-run`.

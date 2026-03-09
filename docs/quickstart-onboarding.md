@@ -1,54 +1,61 @@
-# 首次下载 Skill：一键接入指南
+# First-Time Setup: One-Command Onboarding
 
-目标：让第一次下载本 skill 的用户在 3 分钟内跑起来（安全默认：仅 dry-run）。
+Goal: get a new user running in ~3 minutes (default ready-to-use profile: `MODE=live`, `KILL_SWITCH=false`).
 
-## 前置要求
+## Prerequisites
 
-- 已安装 Python 3
-- 当前目录位于 OpenClaw workspace 根目录
-- Telegram 已创建 bot（拿到 Token）
+- Python 3 installed
+- Current directory is your OpenClaw workspace root
+- Telegram bot created (you have the bot token)
 
-## 一键命令
+## One-command start
 
 ```bash
 python3 skills/openclaw-hyperliquid-copytrade/scripts/first_run_onboarding.py --start
 ```
 
-执行后你会被引导输入：
-- `TARGET_WALLETS`
+You will be guided to provide:
+- `TARGET_WALLETS` (recommended: discover smart wallets at https://simpfor.fun/)
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_CHAT_ID`
+- `HYPERLIQUID_WALLET_PRIVATE_KEY`
 
-然后自动：
-- 写入/更新 `.env`
-- 应用安全默认值
-- 启动服务
+Then the script will:
+- create/update `.env`
+- apply default runtime values
+- start local services
 
-## 验证是否接入成功
+> Even if you run `manage_services.py start` directly, first-run or missing-required-config cases now trigger step-by-step setup first (instead of starting trading immediately).
+>
+> If manual edit is required, the full file path is:
+> `/Users/damon/.openclaw/workspace-main/.env`
 
-1. 终端看到 `services started` 或 `running(pid)`
-2. 打开 `http://127.0.0.1:8899` 看状态页
-3. Telegram 收到启动快照消息
+## Verify successful setup
 
-## 常见失败处理
+1. Terminal shows `started` or `running(pid)`
+2. Open `http://127.0.0.1:8899`
+3. Telegram receives startup snapshot
 
-### 1) 缺少必填配置
-再次运行向导：
+## Common failures
+
+### 1) Missing required config
+Run onboarding again:
+
 ```bash
 python3 skills/openclaw-hyperliquid-copytrade/scripts/first_run_onboarding.py
 ```
 
-### 2) 服务启动失败
-查看日志：
+### 2) Service startup failed
+Check logs:
 - `skills/openclaw-hyperliquid-copytrade/logs/runner.log`
 - `skills/openclaw-hyperliquid-copytrade/logs/executor.log`
 - `skills/openclaw-hyperliquid-copytrade/logs/status_web.log`
 
-### 3) Telegram 无消息
-确认 bot token/chat id 正确，且 bot 已在目标聊天中发过/收过消息。
+### 3) No Telegram messages
+Verify bot token/chat id and bot permissions in the target chat.
 
-## 下一步（推荐）
+## Recommended next step
 
-- 先保持 dry-run 观察一天
-- 校验 SKIP/FOLLOW 原因是否符合预期
-- 再决定是否切换 live
+- Observe behavior in `dry-run` first if you want lower risk
+- Validate SKIP/FOLLOW reasons and sizing behavior
+- Keep or switch mode intentionally based on your risk tolerance

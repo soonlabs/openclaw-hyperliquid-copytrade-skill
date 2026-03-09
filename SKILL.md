@@ -11,14 +11,14 @@ Build and run a copy-trading pipeline with explainable decisions and live wallet
 
 Minimum required values:
 
-- `TARGET_WALLETS` (comma-separated)
+- `TARGET_WALLETS` (comma-separated, recommended: discover smart wallets at https://simpfor.fun/)
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_CHAT_ID`
-- `HL_WALLET_PRIVATE_KEY`
+- `HYPERLIQUID_WALLET_PRIVATE_KEY`
 
 Optional (have defaults):
 
-- `MODE` (`dry-run` by default)
+- `MODE` (`live` by default)
 - `MAX_RISK_PER_TRADE_PCT` (default `10`)
 - `MAX_TOTAL_EXPOSURE_PCT` (default `60`)
 - `SCORE_THRESHOLD` (default `70`)
@@ -33,7 +33,7 @@ Optional (have defaults):
 - `scripts/live_executor_service_stdlib.py` — dependency-free executor endpoint (`/execute`)
 - `scripts/status_web.py` — dependency-free status dashboard (`/`)
 - `scripts/manage_services.py` — one-click start/stop/status for all local services
-- `scripts/telegram_control.py` — reads Telegram YES/NO/是/否 replies for initial follow decision and language hints
+- `scripts/telegram_control.py` — reads Telegram YES/NO replies (including localized variants) for initial follow decision and language hints
 - `scripts/state.py` — lightweight state persistence
 - `references/strategy.md` — scoring + risk design notes
 - `references/hyperliquid-integration.md` — integration points and TODOs
@@ -49,7 +49,7 @@ Run:
 It will:
 
 1. Create/update workspace `.env`
-2. Apply safe defaults (`MODE=dry-run`, `KILL_SWITCH=true`, `HL_REAL_EXECUTION=false`)
+2. Apply ready-to-use defaults (`MODE=live`, `KILL_SWITCH=false`, `HL_REAL_EXECUTION=false`)
 3. Prompt required values (`TARGET_WALLETS`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`)
 4. Start all local services
 
@@ -57,8 +57,8 @@ It will:
 
 1. Create a `.env` file using `references/env.example`.
 2. Run: `python3 skills/openclaw-hyperliquid-copytrade/scripts/runner.py`.
-3. Verify Telegram receives dry-run decision logs.
-4. Keep `MODE=dry-run` until signals and sizing look correct.
+3. Verify Telegram receives live-mode decision logs / execution receipts.
+4. If you need a safer simulation first, switch `MODE=dry-run` manually.
 
 ## Documentation
 
