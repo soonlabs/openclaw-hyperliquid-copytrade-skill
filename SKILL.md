@@ -12,9 +12,9 @@ Build and run a copy-trading pipeline with explainable decisions and live wallet
 Minimum required values:
 
 - `TARGET_WALLETS` (comma-separated, recommended: discover smart wallets at https://simpfor.fun/)
-- `TELEGRAM_BOT_TOKEN`
-- `TELEGRAM_CHAT_ID`
-- `HYPERLIQUID_WALLET_PRIVATE_KEY`
+- `TELEGRAM_BOT_TOKEN` (bot token from @BotFather in Telegram)
+- `TELEGRAM_CHAT_ID` (Telegram chat/group ID for receiving copy-trade notifications)
+- `HYPERLIQUID_WALLET_PRIVATE_KEY` (your Hyperliquid wallet private key for order execution)
 
 Optional (have defaults):
 
@@ -135,3 +135,14 @@ To switch to simulation mode, set `MODE=dry-run` or `HL_REAL_EXECUTION=false`.
 - Replace `build_order_stub()` with actual Hyperliquid order payload.
 - Add wallet-level weighting and blacklist/whitelist filters.
 - Add post-trade analytics to update wallet confidence over time.
+
+How to get tg bot 的chat id?                                                                                                                                    
+                                                                                                                                                        
+### 方法 A（最简单）                                                                                                                                       
+                                                                                                                                                        
+1. 给你的 bot 发一条消息（私聊或群里 @它）。                                                                                                               
+2. 浏览器打开：                                                                                                                                            
+https://api.telegram.org/bot<你的BOT_TOKEN>/getUpdates                                                                                                     
+3. 在返回 JSON 里找：                                                                                                                                      
+- 私聊：message.chat.id（通常是正数）                                                                                                                      
+- 群组：message.chat.id（通常是负数，如 -100...）          
