@@ -92,7 +92,7 @@ Use the template matching the user's language (Chinese input → Chinese templat
 启动被拦截了（配置未完成）：
 
 缺少以下必填项：
-- TARGET_WALLETS (要跟单的钱包地址，逗号分隔，推荐在 simpfor.fun 发现聪明钱)
+- TARGET_WALLETS (要跟单的钱包地址，逗号分隔，推荐在 https://simpfor.fun 发现聪明钱)
 - TELEGRAM_BOT_TOKEN (Telegram 机器人 token，从 @BotFather 获取)
 - TELEGRAM_CHAT_ID (Telegram 会话/群组 ID，用于接收跟单通知)
 - HYPERLIQUID_WALLET_PRIVATE_KEY (你的 Hyperliquid 钱包私钥，用于下单)
@@ -106,7 +106,7 @@ Use the template matching the user's language (Chinese input → Chinese templat
 Start blocked (config incomplete):
 
 Missing required fields:
-- TARGET_WALLETS (comma-separated wallet addresses to copy, discover smart wallets at simpfor.fun)
+- TARGET_WALLETS (comma-separated wallet addresses to copy, discover smart wallets at https://simpfor.fun)
 - TELEGRAM_BOT_TOKEN (bot token from @BotFather in Telegram)
 - TELEGRAM_CHAT_ID (Telegram chat/group ID for receiving copy-trade notifications)
 - HYPERLIQUID_WALLET_PRIVATE_KEY (your Hyperliquid wallet private key for order execution)
