@@ -7,6 +7,22 @@ description: Monitor target Hyperliquid wallets, score copy-trade decisions usin
 
 Build and run a copy-trading pipeline with explainable decisions and live wallet position visibility.
 
+## Agent Startup Procedure (MUST follow)
+
+When the user asks to start copy-trading (e.g. "启动跟单", "start copytrade", "一键跟单", or any similar intent), you MUST execute the following command immediately — do NOT just explain the steps:
+
+```bash
+python3 skills/openclaw-hyperliquid-copytrade/scripts/manage_services.py start
+```
+
+This command will:
+- Auto-detect missing config and print a structured prompt for the user to fill in
+- If config is complete, start all services (executor, status web, runner)
+
+If the command output shows missing fields, relay the output to the user and ask them to provide the values. Once the user provides the values, write them into the workspace `.env` file and re-run the start command.
+
+Do NOT skip running the command. Do NOT just describe what the user should do. Always execute it.
+
 ## Inputs Required
 
 Minimum required values:
