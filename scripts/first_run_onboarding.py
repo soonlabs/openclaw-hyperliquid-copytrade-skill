@@ -22,12 +22,31 @@ REQUIRED = [
     "HYPERLIQUID_WALLET_PRIVATE_KEY",
 ]
 
+FIELD_DESC: dict[str, tuple[str, str]] = {
+    "TARGET_WALLETS": (
+        "comma-separated wallet addresses to copy, discover smart wallets at simpfor.fun",
+        "要跟单的钱包地址，逗号分隔，推荐在 simpfor.fun 发现聪明钱",
+    ),
+    "TELEGRAM_BOT_TOKEN": (
+        "bot token from @BotFather in Telegram",
+        "Telegram 机器人 token，从 @BotFather 获取",
+    ),
+    "TELEGRAM_CHAT_ID": (
+        "Telegram chat/group ID for receiving copy-trade notifications",
+        "Telegram 会话/群组 ID，用于接收跟单通知",
+    ),
+    "HYPERLIQUID_WALLET_PRIVATE_KEY": (
+        "your Hyperliquid wallet private key for order execution",
+        "你的 Hyperliquid 钱包私钥，用于下单",
+    ),
+}
+
 SAFETY_DEFAULTS = {
     "MODE": "live",
     "MAX_RISK_PER_TRADE_PCT": "10",
     "MAX_TOTAL_EXPOSURE_PCT": "60",
     "KILL_SWITCH": "false",
-    "HL_REAL_EXECUTION": "false",
+    "HL_REAL_EXECUTION": "true",
     "LIVE_EXECUTOR_URL": "http://127.0.0.1:8787/execute",
     "STATUS_WEB_URL": "http://127.0.0.1:8899",
     "TG_LANG": "auto",
@@ -151,19 +170,25 @@ def main() -> int:
     write_env(ENV_FILE, data)
 
     if missing:
-        print(t(lang, "\n❌ Missing required configuration:", "\n❌ 以下配置仍缺失，请补充后重试："))
+        print(t(lang, "\nStart blocked (config incomplete):", "\n启动被拦截了（配置未完成）："))
+        print(t(lang, "\nMissing required fields:", "\n缺少以下必填项："))
         for m in missing:
-            print(f"- {m}")
-        if "TARGET_WALLETS" in missing:
-            print(t(lang, "Tip: discover candidate smart wallets at https://simpfor.fun/", "提示：可先到 https://simpfor.fun/ 发现并筛选聪明钱钱包地址"))
-        print(t(lang, f"\nTemplate/config saved to: {ENV_FILE}", f"\n已写入模板到: {ENV_FILE}"))
+            en_desc, zh_desc = FIELD_DESC.get(m, (m, m))
+            print(f"- {m} ({t(lang, en_desc, zh_desc)})")
+        print(
+            t(
+                lang,
+                "\nSend me these values and I'll complete setup and start.",
+                "\n你把这几项发我，我就继续帮你完成并启动。",
+            )
+        )
         return 1
 
     print(
         t(
             lang,
-            "\n✅ .env is ready (default ready-to-use: MODE=live + KILL_SWITCH=false)",
-            "\n✅ .env 已就绪（默认开箱即用：MODE=live + KILL_SWITCH=false）",
+            "\n✅ .env is ready (real trading: MODE=live, HL_REAL_EXECUTION=true)",
+            "\n✅ .env 已就绪（真实跟单：MODE=live, HL_REAL_EXECUTION=true）",
         )
     )
     print(t(lang, f"- Web dashboard: {data.get('STATUS_WEB_URL', 'http://127.0.0.1:8899')}", f"- Web 面板: {data.get('STATUS_WEB_URL', 'http://127.0.0.1:8899')}"))

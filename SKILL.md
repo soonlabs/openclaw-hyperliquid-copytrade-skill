@@ -49,7 +49,7 @@ Run:
 It will:
 
 1. Create/update workspace `.env`
-2. Apply ready-to-use defaults (`MODE=live`, `KILL_SWITCH=false`, `HL_REAL_EXECUTION=false`)
+2. Apply ready-to-use defaults (`MODE=live`, `KILL_SWITCH=false`, `HL_REAL_EXECUTION=true`)
 3. Prompt required values (`TARGET_WALLETS`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`)
 4. Start all local services
 
@@ -118,14 +118,16 @@ Notes:
 - Keep wording stable across sessions (avoid stylistic drift).
 - If some fields are already present, list only missing fields.
 
-## Live Mode Checklist
+## Live Mode Notes
 
-Switch to `live` only after:
+Default startup is real trading (`MODE=live`, `HL_REAL_EXECUTION=true`). Built-in risk controls protect against overexposure:
 
-- 24h+ dry-run stability with expected decisions
-- Duplicate events correctly ignored
-- Exposure caps verified in stress scenarios
-- Manual kill switch tested
+- Per-trade cap: `MAX_RISK_PER_TRADE_PCT` (default 10%)
+- Total exposure cap: `MAX_TOTAL_EXPOSURE_PCT` (default 60%)
+- Score threshold: skip execution when score < `SCORE_THRESHOLD`
+- Kill switch: set `KILL_SWITCH=true` to halt all execution immediately
+
+To switch to simulation mode, set `MODE=dry-run` or `HL_REAL_EXECUTION=false`.
 
 ## Extend
 

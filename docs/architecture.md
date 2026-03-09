@@ -68,6 +68,6 @@ Ready-to-use defaults:
 
 - `MODE=live`
 - `KILL_SWITCH=false`
-- `HL_REAL_EXECUTION=false`
+- `HL_REAL_EXECUTION=true`
 
-This enables live decision/execution flow at startup. If you want simulation-first behavior, switch to `MODE=dry-run` manually.
+This enables live decision/execution flow with real order placement at startup. If you want simulation-first behavior, switch to `MODE=dry-run` or `HL_REAL_EXECUTION=false` manually.

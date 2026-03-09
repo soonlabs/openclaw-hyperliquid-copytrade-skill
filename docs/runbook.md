@@ -169,6 +169,6 @@ Current default profile:
 
 - `MODE=live`
 - `KILL_SWITCH=false`
-- `HL_REAL_EXECUTION=false`
+- `HL_REAL_EXECUTION=true`
 
-If you need a safer observation mode, switch manually to `MODE=dry-run`.
+If you need a safer observation mode, switch manually to `MODE=dry-run` or `HL_REAL_EXECUTION=false`.

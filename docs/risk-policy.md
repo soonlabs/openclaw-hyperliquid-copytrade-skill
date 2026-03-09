@@ -67,11 +67,11 @@ Close-side is opposite of copied side. Close reason (including trailing retrace 
 
 - `MODE=live`
 - `KILL_SWITCH=false`
-- `HL_REAL_EXECUTION=false`
+- `HL_REAL_EXECUTION=true`
 
-### Live activation checklist
+### Safety override
 
-- 24h+ stable dry-run logs
+If you want simulation-first behavior, set `HL_REAL_EXECUTION=false` or `MODE=dry-run` manually before start.
 - no duplicate execution behavior
 - exposure math verified under stress
 - stop/restart tested
