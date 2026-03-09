@@ -154,6 +154,8 @@ def main() -> int:
         print(t(lang, "\n❌ Missing required configuration:", "\n❌ 以下配置仍缺失，请补充后重试："))
         for m in missing:
             print(f"- {m}")
+        if "TARGET_WALLETS" in missing:
+            print(t(lang, "Tip: discover candidate smart wallets at https://simpfor.fun/", "提示：可先到 https://simpfor.fun/ 发现并筛选聪明钱钱包地址"))
         print(t(lang, f"\nTemplate/config saved to: {ENV_FILE}", f"\n已写入模板到: {ENV_FILE}"))
         return 1
 

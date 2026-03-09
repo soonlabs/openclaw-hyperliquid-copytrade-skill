@@ -99,6 +99,8 @@ def _ensure_required_config_interactive() -> bool:
         print(_t(lang, "\nNon-interactive terminal detected. Please fill the following fields and retry:", "\n当前不是交互终端，无法逐步询问。请先补齐以下字段后重试："))
         for key in missing:
             print(f"- {key}")
+        if "TARGET_WALLETS" in missing:
+            print(_t(lang, "Tip: discover candidate smart wallets at https://simpfor.fun/", "提示：可先到 https://simpfor.fun/ 发现并筛选聪明钱钱包地址"))
         return False
 
     prompts = {
