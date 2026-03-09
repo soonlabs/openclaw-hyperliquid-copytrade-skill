@@ -28,6 +28,7 @@ SAFETY_DEFAULTS = {
     "MAX_TOTAL_EXPOSURE_PCT": "60",
     "KILL_SWITCH": "false",
     "HL_REAL_EXECUTION": "false",
+    "LIVE_EXECUTOR_URL": "http://127.0.0.1:8787/execute",
     "STATUS_WEB_URL": "http://127.0.0.1:8899",
     "TG_LANG": "auto",
 }
@@ -67,6 +68,10 @@ def ask_if_needed(data: dict[str, str], key: str, prompt: str) -> None:
 
 
 def apply_defaults(data: dict[str, str]) -> None:
+    # Backward compatibility: older setup used HL_WALLET_PRIVATE_KEY
+    if not data.get("HYPERLIQUID_WALLET_PRIVATE_KEY") and data.get("HL_WALLET_PRIVATE_KEY"):
+        data["HYPERLIQUID_WALLET_PRIVATE_KEY"] = data["HL_WALLET_PRIVATE_KEY"]
+
     for k, v in SAFETY_DEFAULTS.items():
         data[k] = v
 
