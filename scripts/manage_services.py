@@ -92,23 +92,35 @@ def _ensure_required_config_interactive() -> bool:
     if not missing:
         return True
 
-    print(_t(lang, "⚠️ First run or incomplete config detected. Let's collect required fields step-by-step:", "⚠️ 检测到首次启动或配置不完整，先进行分步骤配置："))
-    print(_t(lang, f"Config file: {ENV_FILE}", f"配置文件：{ENV_FILE}"))
-
     if not sys.stdin.isatty():
         if lang == "zh":
-            print("\n启动被拦截了（配置未完成）：")
-            print("\n缺少以下必填项：")
-            for key in missing:
-                print(f"- {key}")
+            print("启动被拦截了（配置未完成）：\n")
+            print("缺少以下必填项：")
+            if "TARGET_WALLETS" in missing:
+                print("- TARGET_WALLETS (要跟单的钱包地址，逗号分隔，推荐在 simpfor.fun 发现聪明钱)")
+            if "TELEGRAM_BOT_TOKEN" in missing:
+                print("- TELEGRAM_BOT_TOKEN (Telegram 机器人 token，从 @BotFather 获取)")
+            if "TELEGRAM_CHAT_ID" in missing:
+                print("- TELEGRAM_CHAT_ID (Telegram 会话/群组 ID，用于接收跟单通知)")
+            if "HYPERLIQUID_WALLET_PRIVATE_KEY" in missing:
+                print("- HYPERLIQUID_WALLET_PRIVATE_KEY (你的 Hyperliquid 钱包私钥，用于下单)")
             print("\n你把这 4 项发我，我就继续帮你完成并启动。")
         else:
-            print("\nStartup blocked (configuration incomplete):")
-            print("\nMissing required fields:")
-            for key in missing:
-                print(f"- {key}")
-            print("\nSend me these 4 fields and I will complete setup and continue startup.")
+            print("Start blocked (config incomplete):\n")
+            print("Missing required fields:")
+            if "TARGET_WALLETS" in missing:
+                print("- TARGET_WALLETS (comma-separated wallet addresses to copy, discover smart wallets at simpfor.fun)")
+            if "TELEGRAM_BOT_TOKEN" in missing:
+                print("- TELEGRAM_BOT_TOKEN (bot token from @BotFather in Telegram)")
+            if "TELEGRAM_CHAT_ID" in missing:
+                print("- TELEGRAM_CHAT_ID (Telegram chat/group ID for receiving copy-trade notifications)")
+            if "HYPERLIQUID_WALLET_PRIVATE_KEY" in missing:
+                print("- HYPERLIQUID_WALLET_PRIVATE_KEY (your Hyperliquid wallet private key for order execution)")
+            print("\nSend me these 4 values and I'll complete setup and start.")
         return False
+
+    print(_t(lang, "⚠️ First run or incomplete config detected. Let's collect required fields step-by-step:", "⚠️ 检测到首次启动或配置不完整，先进行分步骤配置："))
+    print(_t(lang, f"Config file: {ENV_FILE}", f"配置文件：{ENV_FILE}"))
 
     prompts = {
         "TARGET_WALLETS": _t(lang, "1/4 Enter target wallet address(es), comma-separated (discover smart wallets at https://simpfor.fun/): ", "1/4 请输入跟单目标钱包地址（多个用逗号分隔，推荐在 https://simpfor.fun/ 发现聪明钱）: "),
