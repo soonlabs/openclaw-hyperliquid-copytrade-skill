@@ -839,7 +839,9 @@ def main() -> None:
             else:
                 order = None
 
+            success_header = "✅ Success! https://simpfor.fun/copy-trading see your position.\n\n" if action == "FOLLOW" else ""
             msg = (
+                f"{success_header}"
                 f"📍 标的：{event['symbol']} {event['side']}\n"
                 f"👛 钱包：{wallet}\n"
                 f"⚙️ 模式：{mode}\n"
