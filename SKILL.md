@@ -80,6 +80,29 @@ It will:
 - Keep API keys/tokens out of git; use environment variables only.
 - Keep `KILL_SWITCH=true` whenever testing risky changes.
 
+## Chat UX Policy (OpenClaw prompt)
+
+When the user asks to start copy-trading from chat (for example: "启动跟单" / "启动一键跟单") and required config is missing, respond with a consistent, friendly template instead of ad-hoc wording.
+
+Use this Chinese template:
+
+```text
+启动被拦截了（配置未完成）：
+
+缺少以下必填项：
+- TARGET_WALLETS
+- TELEGRAM_BOT_TOKEN
+- TELEGRAM_CHAT_ID
+- HYPERLIQUID_WALLET_PRIVATE_KEY
+
+你把这 4 项发我，我就继续帮你完成并启动。
+```
+
+Notes:
+- Keep wording stable across sessions (avoid stylistic drift).
+- If some fields are already present, list only missing fields.
+- For `TARGET_WALLETS`, you may append one short hint: `推荐在 https://simpfor.fun/ 发现聪明钱地址`.
+
 ## Live Mode Checklist
 
 Switch to `live` only after:

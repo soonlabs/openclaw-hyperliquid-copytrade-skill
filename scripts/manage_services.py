@@ -96,11 +96,18 @@ def _ensure_required_config_interactive() -> bool:
     print(_t(lang, f"Config file: {ENV_FILE}", f"配置文件：{ENV_FILE}"))
 
     if not sys.stdin.isatty():
-        print(_t(lang, "\nNon-interactive terminal detected. Please fill the following fields and retry:", "\n当前不是交互终端，无法逐步询问。请先补齐以下字段后重试："))
-        for key in missing:
-            print(f"- {key}")
-        if "TARGET_WALLETS" in missing:
-            print(_t(lang, "Tip: discover candidate smart wallets at https://simpfor.fun/", "提示：可先到 https://simpfor.fun/ 发现并筛选聪明钱钱包地址"))
+        if lang == "zh":
+            print("\n启动被拦截了（配置未完成）：")
+            print("\n缺少以下必填项：")
+            for key in missing:
+                print(f"- {key}")
+            print("\n你把这 4 项发我，我就继续帮你完成并启动。")
+        else:
+            print("\nStartup blocked (configuration incomplete):")
+            print("\nMissing required fields:")
+            for key in missing:
+                print(f"- {key}")
+            print("\nSend me these 4 fields and I will complete setup and continue startup.")
         return False
 
     prompts = {
