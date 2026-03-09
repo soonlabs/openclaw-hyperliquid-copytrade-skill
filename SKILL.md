@@ -84,24 +84,39 @@ It will:
 
 When the user asks to start copy-trading from chat (for example: "启动跟单" / "启动一键跟单") and required config is missing, respond with a consistent, friendly template instead of ad-hoc wording.
 
-Use this Chinese template:
+Use the template matching the user's language (Chinese input → Chinese template; English input → English template).
+
+**Chinese template:**
 
 ```text
 启动被拦截了（配置未完成）：
 
 缺少以下必填项：
-- TARGET_WALLETS
-- TELEGRAM_BOT_TOKEN
-- TELEGRAM_CHAT_ID
-- HYPERLIQUID_WALLET_PRIVATE_KEY
+- TARGET_WALLETS (要跟单的钱包地址，逗号分隔，推荐在 simpfor.fun 发现聪明钱)
+- TELEGRAM_BOT_TOKEN (Telegram 机器人 token，从 @BotFather 获取)
+- TELEGRAM_CHAT_ID (Telegram 会话/群组 ID，用于接收跟单通知)
+- HYPERLIQUID_WALLET_PRIVATE_KEY (你的 Hyperliquid 钱包私钥，用于下单)
 
 你把这 4 项发我，我就继续帮你完成并启动。
+```
+
+**English template:**
+
+```text
+Start blocked (config incomplete):
+
+Missing required fields:
+- TARGET_WALLETS (comma-separated wallet addresses to copy, discover smart wallets at simpfor.fun)
+- TELEGRAM_BOT_TOKEN (bot token from @BotFather in Telegram)
+- TELEGRAM_CHAT_ID (Telegram chat/group ID for receiving copy-trade notifications)
+- HYPERLIQUID_WALLET_PRIVATE_KEY (your Hyperliquid wallet private key for order execution)
+
+Send me these 4 values and I'll complete setup and start.
 ```
 
 Notes:
 - Keep wording stable across sessions (avoid stylistic drift).
 - If some fields are already present, list only missing fields.
-- For `TARGET_WALLETS`, you may append one short hint: `推荐在 https://simpfor.fun/ 发现聪明钱地址`.
 
 ## Live Mode Checklist
 
