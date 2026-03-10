@@ -88,7 +88,7 @@ python3 skills/openclaw-hyperliquid-copytrade/scripts/manage_services.py status
 如果你在 Telegram / OpenClaw 对话里操作，直接发：
 
 ```text
-启动一键跟单
+启动一键跟单，走初次跟单流程
 ```
 
 如果你希望它一次性就补齐配置并开跑，发：
