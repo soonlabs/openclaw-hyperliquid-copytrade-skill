@@ -186,6 +186,34 @@ def _render_initial_follow_msg(lang: str, total_positions: int) -> str:
     return f"🟢 Initial follow requested (YES). Detected {total_positions} open positions. Executing initial follow flow."
 
 
+def _render_initial_follow_result(lang: str, typ: str, coin: str, side: str, **kwargs) -> str:
+    """Render per-position initial follow result with emoji, supports zh/en."""
+    if typ == "skip":
+        if lang == "zh":
+            return f"⏸️ 跳过 {coin} {side}：kill_switch 已开启"
+        return f"⏸️ Skipped {coin} {side}: kill_switch=true"
+    if typ == "follow":
+        notional = kwargs.get("notional", 0)
+        share = kwargs.get("share", 0)
+        resp = kwargs.get("resp", "")
+        url = "https://simpfor.fun/copy-trading"
+        if lang == "zh":
+            return f"✅ 已跟单 {coin} {side}｜金额={round(notional, 2)} 份额={round(share, 4)}｜resp={resp}\n🔗 查看跟单详情：{url}"
+        return f"✅ Followed {coin} {side}｜notional={round(notional, 2)} share={round(share, 4)}｜resp={resp}\n🔗 View copy-trading details: {url}"
+    if typ == "failed":
+        err = kwargs.get("error", "")
+        if lang == "zh":
+            return f"❌ 跟单失败 {coin} {side}：{err}"
+        return f"❌ Follow failed {coin} {side}: {err}"
+    if typ == "dryrun":
+        notional = kwargs.get("notional", 0)
+        share = kwargs.get("share", 0)
+        if lang == "zh":
+            return f"📋 模拟跟单 {coin} {side}｜金额={round(notional, 2)} 份额={round(share, 4)}"
+        return f"📋 Dry-run {coin} {side}｜notional={round(notional, 2)} share={round(share, 4)}"
+    return ""
+
+
 def _render_reason_natural(action: str, score: float, threshold: float, stats: WalletStats, mult: float,
                            current_exposure: float, proposed_exposure: float, total_cap_pct: float,
                            risk_pct: float, score_ok: bool, risk_ok: bool, exposure_ok: bool,
@@ -574,7 +602,7 @@ def main() -> None:
                             send_telegram(
                                 bot_token,
                                 chat_id,
-                                f"[INITIAL-SKIP] {p.get('coin')} {p.get('side')} kill_switch=true",
+                                _render_initial_follow_result(lang=detected_lang, typ="skip", coin=p.get("coin", ""), side=p.get("side", "")),
                             )
                             continue
 
@@ -589,19 +617,40 @@ def main() -> None:
                                 send_telegram(
                                     bot_token,
                                     chat_id,
-                                    f"[INITIAL-FOLLOW] {p.get('coin')} {p.get('side')} notional={round(notional,2)} share={round(share,4)} resp={live_resp}",
+                                    _render_initial_follow_result(
+                                        lang=detected_lang,
+                                        typ="follow",
+                                        coin=p.get("coin", ""),
+                                        side=p.get("side", ""),
+                                        notional=notional,
+                                        share=share,
+                                        resp=live_resp,
+                                    ),
                                 )
                             except Exception as e:
                                 send_telegram(
                                     bot_token,
                                     chat_id,
-                                    f"[INITIAL-FAILED] {p.get('coin')} {p.get('side')} error={e}",
+                                    _render_initial_follow_result(
+                                        lang=detected_lang,
+                                        typ="failed",
+                                        coin=p.get("coin", ""),
+                                        side=p.get("side", ""),
+                                        error=str(e),
+                                    ),
                                 )
                         else:
                             send_telegram(
                                 bot_token,
                                 chat_id,
-                                f"[INITIAL-DRYRUN] {p.get('coin')} {p.get('side')} notional={round(notional,2)} share={round(share,4)}",
+                                _render_initial_follow_result(
+                                    lang=detected_lang,
+                                    typ="dryrun",
+                                    coin=p.get("coin", ""),
+                                    side=p.get("side", ""),
+                                    notional=notional,
+                                    share=share,
+                                ),
                             )
 
                 initial_follow_done = True
@@ -839,7 +888,11 @@ def main() -> None:
             else:
                 order = None
 
-            success_header = "✅ Success! https://simpfor.fun/copy-trading see your position.\n\n" if action == "FOLLOW" else ""
+            if action == "FOLLOW":
+                url = "https://simpfor.fun/copy-trading"
+                success_header = f"✅ 跟单成功！查看持仓详情：{url}\n\n" if detected_lang == "zh" else f"✅ Success! View your position: {url}\n\n"
+            else:
+                success_header = ""
             msg = (
                 f"{success_header}"
                 f"📍 标的：{event['symbol']} {event['side']}\n"
